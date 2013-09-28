@@ -15,6 +15,7 @@ var (
 type admin struct {
 	action       operation
 	subscription Subscription
+	respondOn    chan bool
 }
 
 // internal admin operations
@@ -23,6 +24,7 @@ type operation int
 const (
 	add operation = iota
 	del
+	query
 )
 
 // The Event struct holds the key and data to be published
@@ -83,6 +85,16 @@ func process() {
 			case del:
 				delete(subscriptionTable[a.subscription.Key], a.subscription.Receiver)
 
+			case query:
+				subMap, ok = subscriptionTable[a.subscription.Key]
+
+				if !ok {
+					a.respondOn <- false
+				}
+
+				_, ok = subMap[a.subscription.Receiver]
+				a.respondOn <- ok
+
 			}
 
 		case e := <-events:
@@ -112,7 +124,7 @@ func Add(s Subscription) error {
 		return errors.New("Error Adding. Have you Started()?")
 	}
 
-	subscriptions <- admin{add, s}
+	subscriptions <- admin{action: add, subscription: s}
 	return nil
 }
 
@@ -123,7 +135,7 @@ func Delete(s Subscription) error {
 		return errors.New("Error Deleting. Have you Started()?")
 	}
 
-	subscriptions <- admin{del, s}
+	subscriptions <- admin{action: del, subscription: s}
 	return nil
 }
 
@@ -136,5 +148,20 @@ func Publish(e Event) error {
 
 	events <- e
 	return nil
+
+}
+
+// Query if a channel is subscribed to a key
+// NB this will block for the reponse; so if we're busy you'll wait
+func Subscribed(key interface{}, receiver chan interface{}) bool {
+
+	if subscriptions == nil {
+		return false
+	}
+
+	response := make(chan bool, 1)
+
+	subscriptions <- admin{action: query, subscription: Subscription{Key: key, Receiver: receiver}, respondOn: response}
+	return <-response
 
 }
