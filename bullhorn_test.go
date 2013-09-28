@@ -18,6 +18,7 @@ func TestDeleteNotStarted(t *testing.T) {
 func TestPublisheNotStarted(t *testing.T) {
 	checkError(t, Publish(Event{"A", "data"}))
 }
+
 func checkError(t *testing.T, err error) {
 	if err == nil {
 		t.Errorf("Failed to raise error")
