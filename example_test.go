@@ -29,6 +29,16 @@ func ExampleStart() {
 	Start(1024, 2048)
 }
 
+func ExampleSubscribed() {
+	ch := make(chan interface{}, 1)
+
+	Add(Subscription{"order book prices", ch})
+	if Subscribed("order book prices", ch) {
+		// all set, off we go
+	}
+
+}
+
 func Example() {
 
 	type A struct {

@@ -151,8 +151,7 @@ func Publish(e Event) error {
 
 }
 
-// Query if a channel is subscribed to a key
-// NB this will block for the reponse; so if we're busy you'll wait
+// Make a blocking query returning true if a channel is subscribed to a key
 func Subscribed(key interface{}, receiver chan interface{}) bool {
 
 	if subscriptions == nil {
