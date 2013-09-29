@@ -186,3 +186,20 @@ func TestSubscribed(t *testing.T) {
 	}
 
 }
+
+// Test that once subscribed, we get published messages
+func TestPublish(t *testing.T) {
+	ch := make(chan interface{}, 2)
+	Start(2, 2)
+
+	sub := Subscription{"A", ch}
+	Add(sub)
+	Subscribed("A", ch)
+
+	Publish(Event{"A", "data"})
+
+	data := <-ch
+	if data.(string) != "data" {
+		t.Errorf("Publish error")
+	}
+}
