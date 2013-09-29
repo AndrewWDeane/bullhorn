@@ -1,0 +1,1 @@
+Add the tests now we can deterministically query a subscription
