@@ -25,6 +25,13 @@ func checkError(t *testing.T, err error) {
 	}
 }
 
+func TestSubscribedNotStarted(t *testing.T) {
+	// before we start, Subscribed will always return false
+	if Subscribed("A", make(chan interface{})) {
+		t.Errorf("Error, subscribed")
+	}
+}
+
 // Test that Add does just that
 func TestAdd(t *testing.T) {
 	ch := make(chan interface{}, 2)

@@ -11,7 +11,7 @@ var (
 	events            chan Event
 )
 
-// internal type to handle the addition and deletion of subscriptions
+// internal type to handle the addition, deletion, and querying of subscriptions
 type admin struct {
 	action       operation
 	subscription Subscription
