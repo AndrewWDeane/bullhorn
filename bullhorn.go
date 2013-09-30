@@ -104,9 +104,9 @@ func process() {
 				for _, sub := range subs {
 
 					// in a seperate routine so that slow consumers don't block others
-					go func(i interface{}) {
-						sub <- i
-					}(e.Data)
+					go func(ch chan interface{}, i interface{}) {
+						ch <- i
+					}(sub, e.Data)
 
 				}
 
